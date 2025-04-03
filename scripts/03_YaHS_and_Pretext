@@ -1,1 +1,39 @@
 #script of YaHS
+
+
+
+
+#!/bin/bash
+#SBATCH -J YAHS2rounds
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p gpu-8
+#SBATCH --mem=800G
+#SBATCH --cpus-per-task=40
+
+#load minimap2
+. /usr/modules/init/bash
+module load minimap2
+module load samtools
+
+#HiC_reads=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/HiC_scaffolding/HiC_reads/
+
+#index ref to get fai file for yahs
+#samtools faidx Aph_5344_purged.fa -o Aph_5344_purged.fa.fai
+
+#index ref to get mmi for minimap2
+#minimap2 -d APH_5344.mmi Aph_5344_purged.fa
+
+# Align to assembly/ref alignment
+#minimap2 -ax sr APH_5344.mmi ${HiC_reads}HiC_R1_concat.fastq.gz ${HiC_reads}HiC_R2_concat.fastq.gz > APH_5344_HiC.sam
+
+#samtools view -S -b APH_5344_HiC.sam > APH_5344_HiC_aligned.bam
+
+#samtools sort -o APH_5344_HiC_aligned_sorted.bam APH_5344_HiC_aligned.bam
+
+#load YaHS
+module load yahs
+
+#Run YaHS, Test with just default
+yahs -R 2 Aph_5344_purged.fa APH_5344_HiC_aligned_sorted.bam -o ./2rounds/yahs_2rounds_.out
