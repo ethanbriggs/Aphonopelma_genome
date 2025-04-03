@@ -1,1 +1,19 @@
 #assemble inital draft genome
+
+#!/bin/bash
+#SBATCH -J Hifiasm_A5344
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p gpu-8
+#SBATCH --mem=1000G
+#SBATCH --cpus-per-task=40
+
+workdir=/mnt/ceph/hamiltonlab_data/EJB_WGS/APH_5344/
+out=/mnt/ceph/hamiltonlab_data/EJB_WGS/APH_5344/assembly/
+
+#load hifiasm
+. /usr/modules/init/bash
+module load hifiasm
+
+hifiasm -o ${out}APH_5344_8cells.asm -t 40 ${workdir}m64027_230829_115422.hifi_reads.fastq.gz ${workdir}m64027_230830_211805.hifi_reads.fastq.gz ${workdir}m64027_230901_064814.hifi_reads.fastq.gz ${workdir}m64027_230907_225350.hifi_reads.fastq.gz ${workdir}m64027_230909_085557.hifi_reads.fastq.gz ${workdir}m64027_230910_184717.hifi_reads.fastq.gz ${workdir}m64027_230912_053014.hifi_reads.fastq.gz ${workdir}m64027_230913_235829.hifi_reads.fastq.gz
