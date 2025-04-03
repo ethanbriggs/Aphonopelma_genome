@@ -1,1 +1,39 @@
+#Script to purge haplotigs from draft genome
 
+#!/bin/bash
+#SBATCH -J PD_A5344
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p gpu-8
+#SBATCH --mem=1500G
+#SBATCH --cpus-per-task=40
+
+CCS=/mnt/ceph/hamiltonlab_data/EJB_WGS/APH_5344/CCS/
+
+
+#step 1: align all reads to the genome
+module load minimap2
+module load samtools
+
+minimap2 -xasm20 -t 40 -I 20G \
+APH_5344_8cells.asm.bp.p_ctg.fa ${CCS}*.fastq.gz \
+| gzip -c - > mapped_reads.paf.gz
+
+#2. Split the assembly file using split_fa and self-align
+/opt/modules/biology/purge_dups/1.2.6/bin/split_fa APH_5344_8cells.asm.bp.p_ctg.fa > APH_5344_8cells.asm.split
+
+minimap2 -xasm5 -DP APH_5344_8cells.asm.split APH_5344_8cells.asm.split | \
+gzip -c - > APH_5344_8cells.asm.split.self.paf.gz
+
+#3. Get cutoffs and stats from reads mappings
+/opt/modules/biology/purge_dups/1.2.6/bin/pbcstat  mapped_reads.paf.gz
+/opt/modules/biology/purge_dups/1.2.6/bin/calcuts PB.stat > cutoffs 2>calcults.log
+
+#4. Purge DUPS!
+/opt/modules/biology/purge_dups/1.2.6/bin/purge_dups -2 -T cutoffs -c PB.base.cov APH_5344_8cells.asm.split.self.paf.gz > dups.bed 2> purge_dups.log
+/opt/modules/biology/purge_dups/1.2.6/bin/get_seqs -e dups.bed APH_5344_8cells.asm.bp.p_ctg.fa
+#AND YOU ARE DONE!
+
+module load python
+python3 /opt/modules/biology/purge_dups/1.2.6/scripts/hist_plot.py -c cutoffs PB.stat PB.cov.png
