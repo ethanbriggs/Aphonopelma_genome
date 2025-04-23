@@ -1,0 +1,8 @@
+#after producing the AGP file from Pretext
+
+#correct the AGP file, due to small scaffolds
+python AGPCorrect.py APH_5344_yahs_2rounds_scaffolds_final.fa APH_5344_yahs_2R_edit.pretext_withX.agp > ./APH_5344_yahs_2R_edit.pretext_withX_corrected.agp
+
+#AGP to Fasta file
+source bio_agptools/bin/activate
+agptools assemble APH_5344_yahs_2rounds_scaffolds_final.fa APH_5344_yahs_2R_edit.pretext_withX_corrected.agp > APH_5344_corrected_scaffolds_145.fa
