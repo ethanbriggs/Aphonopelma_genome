@@ -1,0 +1,92 @@
+#FCS-GX was done on galaxy
+
+
+#FCS-Adaptor
+
+#Screen the genome
+
+curl -LO https://github.com/ncbi/fcs/raw/main/dist/run_fcsadaptor.sh
+chmod 755 run_fcsadaptor.sh
+curl https://ftp.ncbi.nlm.nih.gov/genomes/TOOLS/FCS/releases/latest/fcs-adaptor.sif -Lo fcs-adaptor.sif
+
+export TMPDIR=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/temp
+
+./run_fcsadaptor.sh --fasta-input /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/pretext/APH_5344_corrected_scaffolds.fa --output-dir ./outputdir --euk --container-engine singularity --image /mnt/ceph/hamiltonlab_data/EJB_WGS/Singularity/fcs-adaptor.sif
+
+
+
+cat ./outputdir/fcs_adaptor_report.txt
+
+#accession      length  action  range   name
+Scaffold_14     293959263       ACTION_TRIM     204336398..204336428    CONTAMINATION_SOURCE_TYPE_ADAPTOR:NGB00973.1:Pacific Biosciences C2 Primer
+
+
+
+#!/bin/bash
+#SBATCH -J FCS_trim
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p eight
+#SBATCH --mem=200G
+#SBATCH --cpus-per-task=10
+
+input="/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/pretext/APH_5344_corrected_scaffolds.fa"
+output="/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/TRIMMED_GENOME/APH_5344_corrected_clean.fa"
+
+scaffold="Scaffold_14"
+start=204336398
+end=204336428
+linewidth=60  
+
+awk -v id="$scaffold" -v s="$start" -v e="$end" -v lw="$linewidth" '
+BEGIN {
+    header = ""; seq = ""; in_target = 0;
+}
+{
+    if ($0 ~ /^>/) {
+        if (header != "") {
+            if (in_target) {
+                # Remove the adaptor region from the sequence
+                trimmed = substr(seq, 1, s-1) substr(seq, e+1);
+                print header;
+                for (i = 1; i <= length(trimmed); i += lw)
+                    print substr(trimmed, i, lw);
+            } else {
+                print header;
+                for (i = 1; i <= length(seq); i += lw)
+                    print substr(seq, i, lw);
+            }
+        }
+        header = $0;
+        seq = "";
+        in_target = ($0 ~ ">" id);
+    } else {
+        seq = seq $0;
+    }
+}
+END {
+    if (header != "") {
+        if (in_target) {
+            trimmed = substr(seq, 1, s-1) substr(seq, e+1);
+            print header;
+            for (i = 1; i <= length(trimmed); i += lw)
+                print substr(trimmed, i, lw);
+        } else {
+            print header;
+            for (i = 1; i <= length(seq); i += lw)
+                print substr(seq, i, lw);
+        }
+    }
+}
+' "$input" > "$output"
+
+
+
+
+#test if removed
+export TMPDIR=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/temp
+
+./run_fcsadaptor.sh --fasta-input /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/TRIMMED_GENOME/APH_5344_corrected_clean.fa --output-dir ./trim_confirm_out/ --euk --container-engine singularity --image /mnt/ceph/hamiltonlab_data/EJB_WGS/Singularity/fcs-adaptor.sif
+
+cat ./outputdir/fcs_adaptor_report.txt
