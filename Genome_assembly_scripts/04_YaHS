@@ -1,3 +1,5 @@
+#1, 2, and 3 rounds of scaffolding were trialed. 
+
 #!/bin/bash
 #SBATCH -J YAHS2rounds
 #SBATCH -C "ceph"
