@@ -1,0 +1,24 @@
+#####Pretext
+
+conda activate pretext
+module load samtools
+
+samtools view -h APH_5344_yahs_2R_HiC_aligned_sorted.bam | PretextMap -o APH_5344_yahs_2R.pretext
+
+PretextSnapshot -m APH_5344_yahs_2R.pretext  --sequences "=full" -f png
+
+scp ebriggs@fortyfive.hpc.uidaho.edu:/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/HiC_scaffolding/test_concat_pairs/2rounds/minimap2/APH_5344_yahs_2R_snapshots/APH_5344_yahs_2R_FullMap.png ./
+
+
+
+###add tracks
+
+module load bedtools
+
+bedtools genomecov -bga -ibam APH_5344_2R_aligned.bam > APH_5344_2R_aligned.bedgraph
+
+conda activate pretext
+
+PretextGraph -i /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/HiC_scaffolding/test_concat_pairs/2rounds/minimap2/APH_5344_yahs_2R.pretext -n "HiFI Coverage" < ./APH_5344_2R_aligned.bedgraph
+
+
