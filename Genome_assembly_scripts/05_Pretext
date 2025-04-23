@@ -11,7 +11,31 @@ scp ebriggs@fortyfive.hpc.uidaho.edu:/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_re
 
 
 
-###add tracks
+###align Hifi to scaffolded assembly
+
+#!/bin/bash
+#SBATCH -J minimap2
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p eight
+#SBATCH --mem=200G
+#SBATCH --cpus-per-task=24
+
+#load minimap2 and samtools
+. /usr/modules/init/bash
+module load minimap2
+module load samtools
+
+CCS_reads=/mnt/ceph/hamiltonlab_data/EJB_WGS/APH_5344/CCS/
+
+# map reads to the genome assembly
+minimap2 -ax map-hifi -t 24 APH_5344_yahs_2rounds_scaffolds_final.fa ${CCS_reads}*fastq.gz --secondary=no | samtools sort -m 1G -o APH_5344_2R_aligned.bam -T tmp.ali
+
+samtools index -c APH_5344_2R_aligned.bam
+
+
+## Add tracks
 
 module load bedtools
 
