@@ -1,0 +1,10 @@
+#Do indiviudal comparisons, then
+
+#same genus = -MappingPara "-x asm5"
+#dif genus, same family = -MappingPara "-x asm10"
+#dif family = -MappingPara "-x asm20"
+
+
+
+#Amaurobius ferox v Eratigena atrica
+perl  /mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/GetTwoGenomeSyn.pl -InGenomeA /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Amaurobius_ferox/ncbi_dataset/data/GCA_951213105.1/GCA_951213105.1_qqAmaFero1.1_genomic.fna  -InGenomeB /mnt/ceph/hamiltonlab_data/EJB_WGS/COLORADIA/COLO_067/purge_dups/pipeline2/COLO_067_asm_purged.fa  -OutPrefix AmaFer2EraAtr   -MappingBin  minimap2    -BinDir    /opt/modules/biology/minimap2/2.26/bin -MinLenA 100000 -MinLenB 150000 -MinAlnLen 1000 -MappingPara "-x asm20"
