@@ -8,3 +8,9 @@
 
 #Amaurobius ferox v Eratigena atrica
 perl  /mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/GetTwoGenomeSyn.pl -InGenomeA /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Amaurobius_ferox/ncbi_dataset/data/GCA_951213105.1/GCA_951213105.1_qqAmaFero1.1_genomic.fna  -InGenomeB /mnt/ceph/hamiltonlab_data/EJB_WGS/COLORADIA/COLO_067/purge_dups/pipeline2/COLO_067_asm_purged.fa  -OutPrefix AmaFer2EraAtr   -MappingBin  minimap2    -BinDir    /opt/modules/biology/minimap2/2.26/bin -MinLenA 100000 -MinLenB 150000 -MinAlnLen 1000 -MappingPara "-x asm20"
+
+
+#Dolomedes_plantarius v Pardosa_pseudoannulata
+perl  /mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/GetTwoGenomeSyn.pl -InGenomeA /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Dolomedes_plantarius/ncbi_dataset/data/GCA_907164885.2/GCA_907164885.2_qDolPla1.2_genomic.fna  -InGenomeB /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Pardosa_pseudoannulata/ncbi_dataset/data/GCA_032207245.1/GCA_032207245.1_NJAU_Ppse_V1_genomic.fna  -OutPrefix DolPlan2PardPse   -MappingBin  minimap2    -BinDir    /opt/modules/biology/minimap2/2.26/bin -MinLenA 90000 -MinLenB 120000 -MinAlnLen 1000 -MappingPara "-x asm20"
+
+
