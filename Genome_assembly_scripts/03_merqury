@@ -1,1 +1,41 @@
+====================
+1. Prepare meryl dbs
+====================
+
+#!/bin/bash
+#SBATCH -J merqury_step1_5344
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p gpu-8
+#SBATCH --mem=800G
+#SBATCH --cpus-per-task=20
+
+#load hifiasm
+. /usr/modules/init/bash
+module load merqury
+
+meryl k=51 count *.fastq.gz memory=800g output /mnt/ceph/hamiltonlab_data/EJB_WGS/APH_5344/merqury/APH5344_genome.meryl
+
+
+============================
+2. Overall k mer evaluation
+============================
+
+#!/bin/bash
+#SBATCH -J merqury_step2_A5344
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p reg
+#SBATCH --mem=200G
+#SBATCH --cpus-per-task=20
+
+#load merqury
+. /usr/modules/init/bash
+module load merqury
+
+export MERQURY=/opt/modules/biology/merqury/1.3/bin
+
+merqury.sh APH5344_genome.meryl APH_4021_8cells.asm.bp.hap1.p_ctg.gfa APH_4021_8cells.asm.bp.hap2.p_ctg.gfa out_prefix
 
