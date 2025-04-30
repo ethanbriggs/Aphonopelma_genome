@@ -11,7 +11,7 @@
 #SBATCH --mem=800G
 #SBATCH --cpus-per-task=20
 
-#load hifiasm
+#load merqury
 . /usr/modules/init/bash
 module load merqury
 
