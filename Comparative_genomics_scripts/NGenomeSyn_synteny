@@ -27,6 +27,7 @@ Macrothele_cretica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_gen
 species_list=(
 "Chaetopelma_lymberakisi"
 "Aphonopelma_marxi"
+"Macrothele_cretica"
 )
 
 # get species pair based on array index
