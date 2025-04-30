@@ -4,8 +4,54 @@
 #dif genus, same family = -MappingPara "-x asm10"
 #dif family = -MappingPara "-x asm20"
 
+#!/bin/bash
+#SBATCH -J NGenome_syn_3sp
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p eight-long
+#SBATCH --mem=200G
+#SBATCH --cpus-per-task=10
+#SBATCH --array=0-1  
 
-####array version
+# path to twogenome script
+GetTwo=/mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/
+
+# paths to genomes
+Chaetopelma_lymberakisi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Chaetopelma_lymberakisi/ncbi_dataset/data/GCA_964291345.1/GCA_964291345.1_qqChaLymb1.1_genomic.fna
+Aphonopelma_marxi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_scaffolds_clean_145.fa
+Macrothele_cretica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_cretica/ncbi_dataset/data/GCA_964417605.1/GCA_964417605.1_qqMacCret1.2_genomic.fna
+
+
+# list of species names
+species_list=(
+"Chaetopelma_lymberakisi"
+"Aphonopelma_marxi"
+)
+
+# get species pair based on array index
+i=${SLURM_ARRAY_TASK_ID}
+speciesA=${species_list[$i]}
+speciesB=${species_list[$((i+1))]}
+genomeA=${!speciesA}
+genomeB=${!speciesB}
+
+echo "Running synteny between $speciesA and $speciesB"
+
+perl ${GetTwo}GetTwoGenomeSyn.pl \
+    -InGenomeA "$genomeA" \
+    -InGenomeB "$genomeB" \
+    -OutPrefix "$(printf "%02d" $i)_${speciesA}2${speciesB}" \
+    -MappingBin minimap2 \
+    -BinDir /opt/modules/biology/minimap2/2.26/bin \
+    -MinLenA 10000000 \
+    -MinLenB 10000000 \
+    -MinAlnLen 500 \
+    -MappingPara "-x asm20"
+
+
+
+####array version, to much divergence
 
 #!/bin/bash
 #SBATCH -J NGenome_syn
