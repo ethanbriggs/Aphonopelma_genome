@@ -45,10 +45,10 @@ perl ${GetTwo}GetTwoGenomeSyn.pl \
     -OutPrefix "$(printf "%02d" $i)_${speciesA}2${speciesB}" \
     -MappingBin minimap2 \
     -BinDir /opt/modules/biology/minimap2/2.26/bin \
-    -MinLenA 10000000 \
-    -MinLenB 10000000 \
-    -MinAlnLen 500 \
-    -MappingPara "-x asm20"
+    -MinLenA 11000000 \
+    -MinLenB 11000000 \
+    -MinAlnLen 1500 \
+    -MappingPara "-x asm10"
 
 
 
