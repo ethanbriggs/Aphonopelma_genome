@@ -47,8 +47,8 @@ perl ${GetTwo}GetTwoGenomeSyn.pl \
     -BinDir /opt/modules/biology/minimap2/2.26/bin \
     -MinLenA 11000000 \
     -MinLenB 11000000 \
-    -MinAlnLen 1500 \
-    -MappingPara "-x asm10"
+    -MinAlnLen 1000 \
+    -MappingPara "-x asm5"
 
 
 
