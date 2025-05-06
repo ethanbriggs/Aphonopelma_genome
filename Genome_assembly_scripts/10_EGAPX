@@ -1,0 +1,19 @@
+git clone https://github.com/ncbi/egapx.git
+
+
+python -m venv /mnt/zeta/ebriggs/egapx
+source /mnt/zeta/ebriggs/egapx/bin/activate
+pip install -r requirements.txt
+
+nano APH_5344.yaml
+
+
+
+
+
+
+
+
+
+
+python3 ui/egapx.py ./examples/input_D_farinae_small.yaml -o example_out 
