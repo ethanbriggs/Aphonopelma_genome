@@ -1,0 +1,18 @@
+#!/bin/bash
+#SBATCH -J EG_APH
+#SBATCH -C "ceph"
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=ebriggs@uidaho.edu
+#SBATCH -p eight-long
+#SBATCH --mem=1000G
+#SBATCH --cpus-per-task=40
+#SBATCH --exclusive
+
+## Load conda env
+source /mnt/zeta/ebriggs/miniconda3/bin/activate
+conda activate earlgrey
+
+export TMPDIR=/mnt/zeta/ebriggs/earlgrey/APH_5344/temp
+mkdir -p $TMPDIR
+
+earlGrey -g /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_clean.fa -s APH_5344_ -o ./earlGreyOutputs_APH -t 40 -d yes
