@@ -15,3 +15,4 @@ cat all PB HiFi reads into one file = all_reads.fastq.gz
 # -o 5 is for invert mitogenome code
 mitohifi.py -r all_reads.fastq.gz -f /mnt/zeta/ebriggs/MitoHiFi/ref_mitos/NC_062668.1.fasta -g /mnt/zeta/ebriggs/MitoHiFi/ref_mitos/NC_062668.1.gb -t 4 -o 5 
 
+
