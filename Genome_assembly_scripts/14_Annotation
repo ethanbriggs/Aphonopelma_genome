@@ -92,8 +92,10 @@ module gcc
 /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/HISAT2/hisat2-2.2.1/hisat2-build APH_5344.softmasked.fasta APH5344 --large-index
 
 
-/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/HISAT2/hisat2-2.2.1/hisat2 -x APH5344 -1 all_1_combined.fastq -2 all_2_combined.fastq
-/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/HISAT2/hisat2-2.2.1/hisat2 -x APH5344 -u all_S_combined.fastq
+/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/HISAT2/hisat2-2.2.1/hisat2 -x APH5344 -1 /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/RNAseq/Z_concat_files/all_1_combined.fastq -2 /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/RNAseq/Z_concat_files/all_2_combined.fastq -S APH_5344_paired.sam
+
+
+/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/HISAT2/hisat2-2.2.1/hisat2 -x APH5344 -u /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/Annotation/RNAseq/all_S_combined.fastq -S APH_5344_singles.sam
 
 
 
