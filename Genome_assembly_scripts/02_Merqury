@@ -37,5 +37,5 @@ module load merqury
 
 export MERQURY=/opt/modules/biology/merqury/1.3/bin
 
-merqury.sh APH5344_genome.meryl APH_4021_8cells.asm.bp.hap1.p_ctg.gfa APH_4021_8cells.asm.bp.hap2.p_ctg.gfa out_prefix
+merqury.sh APH5344_genome.meryl APH_5344_8cells.asm.bp.hap1.p_ctg.gfa APH_5344_8cells.asm.bp.hap2.p_ctg.gfa out_prefix
 
