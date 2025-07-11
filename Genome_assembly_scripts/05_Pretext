@@ -6,6 +6,7 @@ module load samtools
 samtools view -h APH_5344_yahs_2R_HiC_aligned_sorted.bam | PretextMap -o APH_5344_yahs_2R.pretext
 
 PretextSnapshot -m APH_5344_yahs_2R.pretext  --sequences "=full" -f png
+PretextSnapshot -m APH_5344_yahs_2R.pretext  --sequences "=full" -c "Red 1" -r 8000  -f jpeg
 
 scp ebriggs@fortyfive.hpc.uidaho.edu:/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/HiC_scaffolding/test_concat_pairs/2rounds/minimap2/APH_5344_yahs_2R_snapshots/APH_5344_yahs_2R_FullMap.png ./
 
