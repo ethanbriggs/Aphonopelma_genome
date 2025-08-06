@@ -5,14 +5,11 @@ apptainer shell mitohifi_master.sif
 
 findMitoReference.py --species "Brachypelma albiceps" --outfolder /mnt/zeta/ebriggs/MitoHiFi/ref_mitos/ --min_length 13000
 
-#output below
-Looking for mitochondrion for Brachypelma albiceps
-Looking for an appropriate organelle among Brachypelma albiceps
-output is written to /mnt/zeta/ebriggs/MitoHiFi/ref_mitos/NC_062668.1.[gb,fasta]
-
 cat all PB HiFi reads into one file = all_reads.fastq.gz
 
 # -o 5 is for invert mitogenome code
 mitohifi.py -r all_reads.fastq.gz -f /mnt/zeta/ebriggs/MitoHiFi/ref_mitos/NC_062668.1.fasta -g /mnt/zeta/ebriggs/MitoHiFi/ref_mitos/NC_062668.1.gb -t 4 -o 5 
+
+#annotated in Geneious Prime using the Brachypelma albiceps annonations
 
 
