@@ -1,1 +1,147 @@
+#R script for making figures
 
+
+library(ggplot2)
+
+# read in data
+
+df_fig2 <- read.csv("Gsize_cov_comp.csv")
+
+
+#Coverage vs complete BUSCOs Figure
+
+ggplot(df_fig2, aes(x = Coverage, y = Complete, color = rank)) +
+  geom_point(size = 5) +
+  labs(x = "Coverage", y = "BUSCOs Complete (%)", title = "Genome Completeness vs Coverage") +
+  theme_light() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_blank()
+  ) + 
+  scale_x_continuous(breaks = seq(0, 200, by = 25)) +
+  scale_y_continuous(breaks = seq(95, 100, by = 0.5))+
+  scale_color_manual(values = c(
+    "Mygalomorphae" = "#41B6E6FF",
+    "Mesothelae" = "#DB3EB1FF",
+    "Araneomorphae:Hypochilidae"      = "#BA0C2FFF",
+    "Araneomorphae:Eresidae" = "#FEDD00FF",
+    "Araneomorphae:Uloboridae" = "#86DD45FF",
+    "Araneomorphae:RTA" = "#E35205FF",
+    "Araneomorphae:Araneoidea"      = "#000000FF"))
+
+
+ggplot(df_fig2, aes(x = Coverage, y = Complete, color = Order)) +
+  geom_point(size = 5) +
+  labs(x = "Coverage", y = "BUSCOs Complete (%)", title = "Genome Completeness vs Coverage") +
+  theme_light() +
+  theme(
+    plot.title = element_text(hjust = 0.5),
+    legend.title = element_blank()
+  ) + 
+  scale_x_continuous(breaks = seq(0, 200, by = 25)) +
+  scale_y_continuous(breaks = seq(95, 100, by = 0.5))+
+  scale_color_manual(values = c(
+    "Mygalomorphae" = "#D01556FF",
+    "Mesothelae" = "darkgrey",
+    "Araneomorphae"      = "black"))
+
+
+
+df_fig2 <- read.csv("Gsize_cov_comp.csv")
+df_fig2$sp <- factor(df_fig2$sp, levels = rev (df_fig2$sp))
+
+ggplot(df_fig2, aes(x = sp, y = genome_size, fill = rank)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  theme_minimal() +
+  labs(x = "Species", y = "Genome size (Gb)", title = "Genome size across spiders") +
+  theme(axis.text.y = element_text(size = 10)) +
+  scale_fill_manual(values = c(
+    "Mygalomorphae" = "#41B6E6FF",
+    "Mesothelae" = "#DB3EB1FF",
+    "Araneomorphae:Hypochilidae"      = "#BA0C2FFF",
+    "Araneomorphae:Eresidae" = "#FEDD00FF",
+    "Araneomorphae:Uloboridae" = "#86DD45FF",
+    "Araneomorphae:RTA" = "#E35205FF",
+    "Araneomorphae:Araneoidea" = "#000000FF"))
+
+
+
+
+
+
+#Repeat Content Figure
+
+# Load required libraries
+library(tidyverse)
+
+# Sample data (abbreviated for readability — you should paste full data)
+df <- read.csv("repeat_comp.csv")
+
+# Reshape from wide to long format
+df_long <- df %>%
+  pivot_longer(
+    cols = -ID,
+    names_to = "Repeat_Type",
+    values_to = "Percentage"
+  )
+
+df_long$ID <- factor(df_long$ID, levels = rev(df$ID))
+
+
+repeat_order <- c("DNA", "Rolling_Circle", "Penelope", "LINE", "SINE", "LTR", "Other", "Unclass.", "NonRep")
+
+# Reorder factor levels
+df_long$Repeat_Type <- factor(df_long$Repeat_Type, levels = rev(repeat_order))
+
+
+
+# Define custom colors (adjust as needed)
+custom_colors <- c(
+  "DNA" = "#F26386FF",
+  "Rolling_Circle" = "#F588AFFF",
+  "Penelope" = "#A4D984FF",
+  "LINE" = "#FCBC52FF",
+  "SINE" = "#FD814EFF",
+  "LTR" = "#F16913FF",
+  "Other" = "#73D8FEFF",
+  "Unclass." = "grey",
+  "NonRep" = "darkgrey"
+)
+
+# Plot
+ggplot(df_long, aes(x = ID, y = Percentage, fill = Repeat_Type)) +
+  geom_bar(stat = "identity") +
+  coord_flip() +
+  guides(fill = guide_legend(reverse = TRUE))+
+  scale_fill_manual(values = custom_colors) +  # Custom color palette
+  labs(
+    x = "Species",
+    y = "Percentage of Genome",
+    fill = "Repeat Type"
+  ) +
+  theme_minimal() +
+  theme(
+    axis.text.y = element_text(size = 9),
+    legend.position = "right"
+  )
+
+
+#make tree for figures 2 and 3
+
+library(ape)
+#BiocManager::install("ggtree")
+library(ggtree)
+
+
+newick <- "(((((M. yani, M. cretica),(A. marxi,C. lymberakisi))),(E. davdi,((((S. mimosarum, S. tentoriicola),(O. sinensis,((A. ferox,E. atrica),(S. scenicus,P. pseudoannulata))))),(((L. elegans,P. tepidariorum),(((T.montana,(H. graminicola,T. excavatus)),((T. antipodiana,(A. bruennichi,L. thorelli)))))))))),R. nishihirai);"
+tree <- read.tree(text = newick)
+
+P <- ggtree(tree,ladderize = TRUE) +  geom_text(aes(label=node), hjust=-0.3) +
+  geom_tiplab()
+P
+P <- ggtree(tree,ladderize = TRUE) +
+  geom_tiplab()
+
+p_rotated <- rotate(P, node = 23)
+p_rotated
