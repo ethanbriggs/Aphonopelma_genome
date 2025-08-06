@@ -16,3 +16,4 @@ Link to Raw data: (update when published)
 Data produced for this study can be found on NCBI under:
 BioProject ID: PRJNA1269020
 BioSample Accession: SAMN48773856
+Pending the publication of the associated manuscript
