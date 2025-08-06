@@ -1,7 +1,3 @@
-module load python
-module load metaeuk
-module load hmmer
-module load bbmap
-
+module load python metaeuk hmmer bbmap
 
 busco -i APH_5344_corrected_scaffolds_145_clean.fa -l arachnida_odb10 -o APH_5344_corrected_scaffolds_145_clean.fa_BUSCO -m genome -c 16 -f 
