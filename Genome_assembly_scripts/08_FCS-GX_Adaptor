@@ -1,6 +1,12 @@
 
-#Link to FCS-GX via Galaxy
+#FCS-GX
+#Link to FCS-GX via Galaxy where analysis was ran
 https://usegalaxy.org/?tool_id=toolshed.g2.bx.psu.edu%2Frepos%2Fiuc%2Fncbi_fcs_gx%2Fncbi_fcs_gx%2F0.5.5%2Bgalaxy0&version=latest
+
+#Parameter/Option choices
+Complete GX database
+GX Division
+Animals – Insects. 
 
 
 #FCS-Adaptor
@@ -13,20 +19,14 @@ curl https://ftp.ncbi.nlm.nih.gov/genomes/TOOLS/FCS/releases/latest/fcs-adaptor.
 
 export TMPDIR=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/145_TRIMMED/temp
 
-./run_fcsadaptor.sh --fasta-input /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/pretext/APH_5344_corrected_scaffolds.fa --output-dir ./outputdir --euk --container-engine singularity --image /mnt/ceph/hamiltonlab_data/EJB_WGS/Singularity/fcs-adaptor.sif
-
-
 /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/run_fcsadaptor.sh --fasta-input /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/pretext/APH_5344_corrected_scaffolds_145.fa --output-dir /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FCS-Adaptor/145_TRIMMED/outputdir --euk --container-engine singularity --image /mnt/ceph/hamiltonlab_data/EJB_WGS/Singularity/fcs-adaptor.sif
 
-
-
-
 cat ./outputdir/fcs_adaptor_report.txt
-
 #accession      length  action  range   name
 Scaffold_14     293959263       ACTION_TRIM     204336398..204336428    CONTAMINATION_SOURCE_TYPE_ADAPTOR:NGB00973.1:Pacific Biosciences C2 Primer
 
 
+#Remove adapter contamination
 
 #!/bin/bash
 #SBATCH -J FCS_trim
