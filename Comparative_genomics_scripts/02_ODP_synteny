@@ -1,270 +1,158 @@
-#Do indiviudal comparisons, then
-
-#same genus = -MappingPara "-x asm5"
-#dif genus, same family = -MappingPara "-x asm10"
-#dif family = -MappingPara "-x asm20"
+#map the recovered single copy BUSCOs back to the genomes
 
 #!/bin/bash
-#SBATCH -J NGenome_syn_3sp
+#SBATCH -J minimap2
 #SBATCH -C "ceph"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=ebriggs@uidaho.edu
-#SBATCH -p eight-long
+#SBATCH -p eight
 #SBATCH --mem=200G
-#SBATCH --cpus-per-task=10
-#SBATCH --array=0-1  
+#SBATCH --cpus-per-task=24
+
+#load minimap2
+. /usr/modules/init/bash
+module load minimap2
+module load samtools
+module load bedtools
+
+minimap2 -d Ste_ten.mmi /mnt/zeta/ebriggs/spider_synteny/genomes/Steten.fna
+minimap2 -a Ste_ten.mmi  /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/BUSCO/fastas/GCA_044658465.1_ASM4465846v1_genomic_BUSCO/run_arachnida_odb10/busco_sequences/single_copy_busco_sequences/*.fna > Steten_BUSCOS.sam 
+
+samtools view -S -b Steten_BUSCOS.sam  > Steten_BUSCOS.bam
+bedtools bamtobed -i Steten_BUSCOS.bam > Steten_BUSCOS.bed
+
+#convert the bed file into the correct chrom format for odp
+awk '{print $4, $1, $6, $2, $3}' Steten_BUSCOS.bed > Steten.chrom
+
+cat Steten.chrom \
+  | tr -d '\r' \
+  | sed 's/[[:space:]]\+/\t/g' \
+  | awk -F'\t' 'NF==5' > StetenClean.chrom
+
+
+#END of script
+
+
+
+#make config file
+nano config.yaml
+
+# This is an example config file for odp/scripts/odp
+#
+# # To use this software first copy this config file to your analysis directory
+# cp odp/example_configs/CONFIG_odp.yaml ./config.yaml
+# # Then modify the config file to include your own data
+# vim config.yaml
+# # Then run the pipeline
+# snakemake -r -p --snakefile odp/scripts/odp
+
+ignore_autobreaks: True       # Skip steps to find breaks in synteny blocks
+diamond_or_blastp: "diamond"  # "diamond" or "blastp"
+duplicate_proteins: "fail"    # currently only "fail" or "best". Fail doesn't allow duplicate names or seqs
+plot_LGs: True                # Plot the ALGs based on the installed databases
+plot_sp_sp: True              # Plot the synteny between two species, if False just generates .rbh files
+
+species:
+  Macyan:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Macyan_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/MacyanClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Macyan.fna
+    minscafsize: 25442927
+  Macrocret:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Maccret_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/MaccretClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Maccret.fna
+    minscafsize: 30000114
+  APH5344:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/APH5344_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/APH5344Clean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/APH5344.fa
+    minscafsize: 165713969
+  Chaelym:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Chaelym_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/ChaelymClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Chaelym.fna
+    minscafsize: 30226836
+  Ectdav:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Ectdav_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/EctdavClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Ectdav.fasta
+    minscafsize: 50024090
+  Stemim:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Stemim_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/StemimClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Stemim.fna
+    minscafsize: 121853691
+  Steten:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Steten_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/StetenClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Steten.fna
+    minscafsize: 119337668
+  Octsin:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Octsin_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/OctsinClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Octsin.fna
+    minscafsize: 117583402
+  Amafer:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Amafer_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/AmaferClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Amafer.fna
+    minscafsize: 109674794
+  Eraatr:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Eraatr_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/EraatrClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Eraatr.fna
+    minscafsize: 167236140
+  Salsce:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Salsce_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/SalsceClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Salsce.fna
+    minscafsize: 226356984
+  Parpse:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Parpse_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/ParpseClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Parpse.fna
+    minscafsize: 95963700
+  Latele:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Latele_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/LateleClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Latele.fna
+    minscafsize: 69395454
+  Partep:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Partep_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/PartepClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Partep.fna
+    minscafsize: 60017610
+  Tetmon:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Tetmon_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/TetmonClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Tetmon.fna
+    minscafsize: 51547119
+  Hylgra:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Hylgra_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/HylgraClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Hylgra.fna
+    minscafsize: 46398548
+  Troexc:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Troexc_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/TroexcClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Troexc.fna
+    minscafsize: 61712969
+  Triant:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Triant_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/TriantClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Triant.fna
+    minscafsize: 112320019
+  Argbru:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Argbru_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/ArgbruClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Argbru.fna
+    minscafsize: 104101263
+  Levtho:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Levtho_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/LevthoClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Levtho.fna
+    minscafsize: 130339984
 
-# path to twogenome script
-GetTwo=/mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/
 
-# paths to genomes
-Chaetopelma_lymberakisi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Chaetopelma_lymberakisi/ncbi_dataset/data/GCA_964291345.1/GCA_964291345.1_qqChaLymb1.1_genomic.fna
-Aphonopelma_marxi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_scaffolds_clean_145.fa
-Macrothele_cretica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_cretica/ncbi_dataset/data/GCA_964417605.1/GCA_964417605.1_qqMacCret1.2_genomic.fna
-
-
-# list of species names
-species_list=(
-"Chaetopelma_lymberakisi"
-"Aphonopelma_marxi"
-"Macrothele_cretica"
-)
-
-# get species pair based on array index
-i=${SLURM_ARRAY_TASK_ID}
-speciesA=${species_list[$i]}
-speciesB=${species_list[$((i+1))]}
-genomeA=${!speciesA}
-genomeB=${!speciesB}
-
-echo "Running synteny between $speciesA and $speciesB"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl \
-    -InGenomeA "$genomeA" \
-    -InGenomeB "$genomeB" \
-    -OutPrefix "$(printf "%02d" $i)_${speciesA}2${speciesB}" \
-    -MappingBin minimap2 \
-    -BinDir /opt/modules/biology/minimap2/2.26/bin \
-    -MinLenA 11000000 \
-    -MinLenB 11000000 \
-    -MinAlnLen 1000 \
-    -MappingPara "-x asm5"
-
-
-
-####array version, to much divergence
-
-#!/bin/bash
-#SBATCH -J NGenome_syn
-#SBATCH -C "ceph"
-#SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=ebriggs@uidaho.edu
-#SBATCH -p eight-long
-#SBATCH --mem=50G
-#SBATCH --cpus-per-task=10
-#SBATCH --array=0-18  
-
-# path to twogenome script
-GetTwo=/mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/
-
-# paths to genomes
-Ryuthela_nishihirai=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Ryuthela_nishihirai/ncbi_dataset/data/GCA_038380435.1/GCA_038380435.1_utr_rspec_v1_genomic.fna
-Chaetopelma_lymberakisi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Chaetopelma_lymberakisi/ncbi_dataset/data/GCA_964291345.1/GCA_964291345.1_qqChaLymb1.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Aphonopelma_marxi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_scaffolds_clean_145.fa
-Macrothele_cretica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_cretica/ncbi_dataset/data/GCA_964417605.1/GCA_964417605.1_qqMacCret1.2_genomic_ChrRenamed.fna_ChrRenamed.fa
-Macrothele_yani=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_yani/ncbi_dataset/data/GCA_039090855.1/GCA_039090855.1_ASM3909085v1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Octonoba_sinensis=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Octonoba_sinensis/ncbi_dataset/data/GCA_038502835.1/GCA_038502835.1_IOZ_Osin_1.0_genomic_ChrRenamed.fna_ChrRenamed.fa
-Amaurobius_ferox=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Amaurobius_ferox/ncbi_dataset/data/GCA_951213105.1/GCA_951213105.1_qqAmaFero1.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Eratigena_atrica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Eratigena_atrica/ncbi_dataset/data/GCA_965122215.1/GCA_965122215.1_qqEraAtri1.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Maratus_michaelseni=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Maratus_michaelseni/ncbi_dataset/data/GCA_963931845.1/GCA_963931845.1_qqMarMich1.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Maratus_speciosus=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Maratus_speciosus/ncbi_dataset/data/GCA_963932465.1/GCA_963932465.1_qqMarSpei1.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Dolomedes_plantarius=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Dolomedes_plantarius/ncbi_dataset/data/GCA_907164885.2/GCA_907164885.2_qDolPla1.2_genomic_ChrRenamed.fna_ChrRenamed.fa
-Pardosa_pseudoannulata=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Pardosa_pseudoannulata/ncbi_dataset/data/GCA_032207245.1/GCA_032207245.1_NJAU_Ppse_V1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Stegodyphus_mimosarum=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Stegodyphus_mimosarum/ncbi_dataset/data/GCA_044660205.1/GCA_044660205.1_ASM4466020v1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Stegodyphus_tentoriicola=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Stegodyphus_tentoriicola/ncbi_dataset/data/GCA_044658465.1/GCA_044658465.1_ASM4465846v1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Latrodectus_elegans=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Latrodectus_elegans/ncbi_dataset/data/GCA_030067965.1/GCA_030067965.1_ASM3006796v1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Tetragnatha_montana=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Tetragnatha_montana/ncbi_dataset/data/GCA_963680715.1/GCA_963680715.1_qqTetMont2.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Hylyphantes_graminicola=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Hylyphantes_graminicola/ncbi_dataset/data/GCA_023701765.1/GCA_023701765.1_ASM2370176v1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Troglohyphantes_excavatus=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Troglohyphantes_excavatus/ncbi_dataset/data/GCA_963932185.1/GCA_963932185.1_qqTroExca7.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Argiope_bruennichi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Argiope_bruennichi/ncbi_dataset/data/GCA_947563725.1/GCA_947563725.1_qqArgBrue1.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-Leviellus_thorelli=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Leviellus_thorelli/ncbi_dataset/data/GCA_965183905.1/GCA_965183905.1_qqLevThor3.1_genomic_ChrRenamed.fna_ChrRenamed.fa
-
-# list of species names
-species_list=(
-"Ryuthela_nishihirai"
-"Chaetopelma_lymberakisi"
-"Aphonopelma_marxi"
-"Macrothele_cretica"
-"Macrothele_yani"
-"Octonoba_sinensis"
-"Amaurobius_ferox"
-"Eratigena_atrica"
-"Maratus_michaelseni"
-"Maratus_speciosus"
-"Dolomedes_plantarius"
-"Pardosa_pseudoannulata"
-"Stegodyphus_mimosarum"
-"Stegodyphus_tentoriicola"
-"Latrodectus_elegans"
-"Tetragnatha_montana"
-"Hylyphantes_graminicola"
-"Troglohyphantes_excavatus"
-"Argiope_bruennichi"
-"Leviellus_thorelli"
-)
-
-# get species pair based on array index
-i=${SLURM_ARRAY_TASK_ID}
-speciesA=${species_list[$i]}
-speciesB=${species_list[$((i+1))]}
-genomeA=${!speciesA}
-genomeB=${!speciesB}
-
-echo "Running synteny between $speciesA and $speciesB"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl \
-    -InGenomeA "$genomeA" \
-    -InGenomeB "$genomeB" \
-    -OutPrefix "$(printf "%02d" $i)_${speciesA}2${speciesB}" \
-    -MappingBin minimap2 \
-    -BinDir /opt/modules/biology/minimap2/2.26/bin \
-    -MinLenA 30000000 \
-    -MinLenB 30000000 \
-    -MinAlnLen 2000 \
-    -MappingPara "-x asm10"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#Amaurobius ferox v Eratigena atrica
-perl  /mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/GetTwoGenomeSyn.pl -InGenomeA /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Amaurobius_ferox/ncbi_dataset/data/GCA_951213105.1/GCA_951213105.1_qqAmaFero1.1_genomic.fna  -InGenomeB /mnt/ceph/hamiltonlab_data/EJB_WGS/COLORADIA/COLO_067/purge_dups/pipeline2/COLO_067_asm_purged.fa  -OutPrefix AmaFer2EraAtr   -MappingBin  minimap2    -BinDir    /opt/modules/biology/minimap2/2.26/bin -MinLenA 100000 -MinLenB 150000 -MinAlnLen 1000 -MappingPara "-x asm20"
-
-
-#Dolomedes_plantarius v Pardosa_pseudoannulata
-perl  /mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/GetTwoGenomeSyn.pl -InGenomeA /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Dolomedes_plantarius/ncbi_dataset/data/GCA_907164885.2/GCA_907164885.2_qDolPla1.2_genomic.fna  -InGenomeB /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Pardosa_pseudoannulata/ncbi_dataset/data/GCA_032207245.1/GCA_032207245.1_NJAU_Ppse_V1_genomic.fna  -OutPrefix DolPlan2PardPse   -MappingBin  minimap2    -BinDir    /opt/modules/biology/minimap2/2.26/bin -MinLenA 90000 -MinLenB 120000 -MinAlnLen 1000 -MappingPara "-x asm20"
-
-####
-
-#!/bin/bash
-#SBATCH -J NGenome_syn
-#SBATCH -C "ceph"
-#SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=ebriggs@uidaho.edu
-#SBATCH -p eight-long
-#SBATCH --mem=200G
-#SBATCH --cpus-per-task=20
-
-# Path to twogenome script
-GetTwo=/mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/
-
-# Paths to genomes
-Ryuthela_nishihirai=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Ryuthela_nishihirai/ncbi_dataset/data/GCA_038380435.1/GCA_038380435.1_utr_rspec_v1_genomic.fna
-Chaetopelma_lymberakisi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Chaetopelma_lymberakisi/ncbi_dataset/data/GCA_964291345.1/GCA_964291345.1_qqChaLymb1.1_genomic.fna
-Aphonopelma_marxi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_scaffolds_clean_145.fa
-Macrothele_cretica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_cretica/ncbi_dataset/data/GCA_964417605.1/GCA_964417605.1_qqMacCret1.2_genomic.fna
-Macrothele_yani=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_yani/ncbi_dataset/data/GCA_039090855.1/GCA_039090855.1_ASM3909085v1_genomic.fna
-Octonoba_sinensis=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Octonoba_sinensis/ncbi_dataset/data/GCA_038502835.1/GCA_038502835.1_IOZ_Osin_1.0_genomic.fna
-Amaurobius_ferox=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Amaurobius_ferox/ncbi_dataset/data/GCA_951213105.1/GCA_951213105.1_qqAmaFero1.1_genomic.fna
-Eratigena_atrica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Eratigena_atrica/ncbi_dataset/data/GCA_965122215.1/GCA_965122215.1_qqEraAtri1.1_genomic.fna
-Maratus_michaelseni=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Maratus_michaelseni/ncbi_dataset/data/GCA_963931845.1/GCA_963931845.1_qqMarMich1.1_genomic.fna
-Maratus_speciosus=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Maratus_speciosus/ncbi_dataset/data/GCA_963932465.1/GCA_963932465.1_qqMarSpei1.1_genomic.fna
-Dolomedes_plantarius=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Dolomedes_plantarius/ncbi_dataset/data/GCA_907164885.2/GCA_907164885.2_qDolPla1.2_genomic.fna
-Pardosa_pseudoannulata=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Pardosa_pseudoannulata/ncbi_dataset/data/GCA_032207245.1/GCA_032207245.1_NJAU_Ppse_V1_genomic.fna
-Stegodyphus_mimosarum=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Stegodyphus_mimosarum/ncbi_dataset/data/GCA_044660205.1/GCA_044660205.1_ASM4466020v1_genomic.fna
-Stegodyphus_tentoriicola=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Stegodyphus_tentoriicola/ncbi_dataset/data/GCA_044658465.1/GCA_044658465.1_ASM4465846v1_genomic.fna
-Latrodectus_elegans=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Latrodectus_elegans/ncbi_dataset/data/GCA_030067965.1/GCA_030067965.1_ASM3006796v1_genomic.fna
-Tetragnatha_montana=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Tetragnatha_montana/ncbi_dataset/data/GCA_963680715.1/GCA_963680715.1_qqTetMont2.1_genomic.fna
-Hylyphantes_graminicola=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Hylyphantes_graminicola/ncbi_dataset/data/GCA_023701765.1/GCA_023701765.1_ASM2370176v1_genomic.fna
-Troglohyphantes_excavatus=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Troglohyphantes_excavatus/ncbi_dataset/data/GCA_963932185.1/GCA_963932185.1_qqTroExca7.1_genomic.fna
-Argiope_bruennichi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Argiope_bruennichi/ncbi_dataset/data/GCA_947563725.1/GCA_947563725.1_qqArgBrue1.1_genomic.fna
-Leviellus_thorelli=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Leviellus_thorelli/ncbi_dataset/data/GCA_965183905.1/GCA_965183905.1_qqLevThor3.1_genomic.fna
-
-# Run GetTwoGenomeSyn.pl between each genome pair
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Ryuthela_nishihirai} -InGenomeB ${Chaetopelma_lymberakisi} -OutPrefix 00_Ryuthela_nishihirai2Chaetopelma_lymberakisi -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Chaetopelma_lymberakisi} -InGenomeB ${Aphonopelma_marxi} -OutPrefix 01_Chaetopelma_lymberakisi2Aphonopelma_marxi -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Aphonopelma_marxi} -InGenomeB ${Macrothele_cretica} -OutPrefix 02_Aphonopelma_marxi2Macrothele_cretica -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Macrothele_cretica} -InGenomeB ${Macrothele_yani} -OutPrefix 03_Macrothele_cretica2Macrothele_yani -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Macrothele_yani} -InGenomeB ${Octonoba_sinensis} -OutPrefix 04_Macrothele_yani2Octonoba_sinensis -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Octonoba_sinensis} -InGenomeB ${Amaurobius_ferox} -OutPrefix 05_Octonoba_sinensis2Amaurobius_ferox -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Amaurobius_ferox} -InGenomeB ${Eratigena_atrica} -OutPrefix 06_Amaurobius_ferox2Eratigena_atrica -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Eratigena_atrica} -InGenomeB ${Maratus_michaelseni} -OutPrefix 07_Eratigena_atrica2Maratus_michaelseni -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Maratus_michaelseni} -InGenomeB ${Maratus_speciosus} -OutPrefix 08_Maratus_michaelseni2Maratus_speciosus -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Maratus_speciosus} -InGenomeB ${Dolomedes_plantarius} -OutPrefix 09_Maratus_speciosus2Dolomedes_plantarius -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Dolomedes_plantarius} -InGenomeB ${Pardosa_pseudoannulata} -OutPrefix 10_Dolomedes_plantarius2Pardosa_pseudoannulata -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Pardosa_pseudoannulata} -InGenomeB ${Stegodyphus_mimosarum} -OutPrefix 11_Pardosa_pseudoannulata2Stegodyphus_mimosarum -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Stegodyphus_mimosarum} -InGenomeB ${Stegodyphus_tentoriicola} -OutPrefix 12_Stegodyphus_mimosarum2Stegodyphus_tentoriicola -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Stegodyphus_tentoriicola} -InGenomeB ${Latrodectus_elegans} -OutPrefix 13_Stegodyphus_tentoriicola2Latrodectus_elegans -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Latrodectus_elegans} -InGenomeB ${Tetragnatha_montana} -OutPrefix 14_Latrodectus_elegans2Tetragnatha_montana -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Tetragnatha_montana} -InGenomeB ${Hylyphantes_graminicola} -OutPrefix 15_Tetragnatha_montana2Hylyphantes_graminicola -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Hylyphantes_graminicola} -InGenomeB ${Troglohyphantes_excavatus} -OutPrefix 16_Hylyphantes_graminicola2Troglohyphantes_excavatus -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Troglohyphantes_excavatus} -InGenomeB ${Argiope_bruennichi} -OutPrefix 17_Troglohyphantes_excavatus2Argiope_bruennichi -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-perl ${GetTwo}GetTwoGenomeSyn.pl -InGenomeA ${Argiope_bruennichi} -InGenomeB ${Leviellus_thorelli} -OutPrefix 18_Argiope_bruennichi2Leviellus_thorelli -MappingBin minimap2 -BinDir /opt/modules/biology/minimap2/2.26/bin -MinLenA 30000000 -MinLenB 30000000 -MinAlnLen 2000 -MappingPara "-x asm10"
-
-
-
-####
-
-
-#!/bin/bash
-#SBATCH -J NGenome_syn
-#SBATCH -C "ceph"
-#SBATCH --mail-type=BEGIN,END,FAIL
-#SBATCH --mail-user=ebriggs@uidaho.edu
-#SBATCH -p eight-long
-#SBATCH --mem=200G
-#SBATCH --cpus-per-task=20
-
-#path to twogenome script
-GetTwo=/mnt/ceph/hamiltonlab_data/EJB_WGS/NGenomeSyn/bin/
-
-#paths to genomes
-Ryuthela_nishihirai=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Ryuthela_nishihirai/ncbi_dataset/data/GCA_038380435.1/GCA_038380435.1_utr_rspec_v1_genomic.fna
-Chaetopelma_lymberakisi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Chaetopelma_lymberakisi/ncbi_dataset/data/GCA_964291345.1/GCA_964291345.1_qqChaLymb1.1_genomic.fna
-Aphonopelma_marxi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_scaffolds_clean_145.fa
-Macrothele_cretica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_cretica/ncbi_dataset/data/GCA_964417605.1/GCA_964417605.1_qqMacCret1.2_genomic.fna
-Macrothele_yani=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Macrothele_yani/ncbi_dataset/data/GCA_039090855.1/GCA_039090855.1_ASM3909085v1_genomic.fna
-Octonoba_sinensis=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Octonoba_sinensis/ncbi_dataset/data/GCA_038502835.1/GCA_038502835.1_IOZ_Osin_1.0_genomic.fna
-Amaurobius_ferox=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Amaurobius_ferox/ncbi_dataset/data/GCA_951213105.1/GCA_951213105.1_qqAmaFero1.1_genomic.fna
-Eratigena_atrica=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Eratigena_atrica/ncbi_dataset/data/GCA_965122215.1/GCA_965122215.1_qqEraAtri1.1_genomic.fna
-Maratus_michaelseni=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Maratus_michaelseni/ncbi_dataset/data/GCA_963931845.1/GCA_963931845.1_qqMarMich1.1_genomic.fna
-Maratus_speciosus=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Maratus_speciosus/ncbi_dataset/data/GCA_963932465.1/GCA_963932465.1_qqMarSpei1.1_genomic.fna
-Dolomedes_plantarius=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Dolomedes_plantarius/ncbi_dataset/data/GCA_907164885.2/GCA_907164885.2_qDolPla1.2_genomic.fna
-Pardosa_pseudoannulata=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Pardosa_pseudoannulata/ncbi_dataset/data/GCA_032207245.1/GCA_032207245.1_NJAU_Ppse_V1_genomic.fna
-Stegodyphus_mimosarum=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Stegodyphus_mimosarum/ncbi_dataset/data/GCA_044660205.1/GCA_044660205.1_ASM4466020v1_genomic.fna
-Stegodyphus_tentoriicola=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Stegodyphus_tentoriicola/ncbi_dataset/data/GCA_044658465.1/GCA_044658465.1_ASM4465846v1_genomic.fna
-Latrodectus_elegans=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Latrodectus_elegans/ncbi_dataset/data/GCA_030067965.1/GCA_030067965.1_ASM3006796v1_genomic.fna
-Tetragnatha_montana=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Tetragnatha_montana/ncbi_dataset/data/GCA_963680715.1/GCA_963680715.1_qqTetMont2.1_genomic.fna
-Hylyphantes_graminicola=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Hylyphantes_graminicola/ncbi_dataset/data/GCA_023701765.1/GCA_023701765.1_ASM2370176v1_genomic.fna
-Troglohyphantes_excavatus=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Troglohyphantes_excavatus/ncbi_dataset/data/GCA_963932185.1/GCA_963932185.1_qqTroExca7.1_genomic.fna
-Argiope_bruennichi=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Argiope_bruennichi/ncbi_dataset/data/GCA_947563725.1/GCA_947563725.1_qqArgBrue1.1_genomic.fna
-Leviellus_thorelli=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Leviellus_thorelli/ncbi_dataset/data/GCA_965183905.1/GCA_965183905.1_qqLevThor3.1_genomic.fna
 
