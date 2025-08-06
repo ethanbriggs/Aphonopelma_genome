@@ -154,5 +154,194 @@ species:
     genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Levtho.fna
     minscafsize: 130339984
 
+######
+
+######
 
 
+conda activate OxfordDotPlot
+
+module load diamond ncbi-blast hmmer
+
+snakemake --snakefile /mnt/zeta/ebriggs/odp/scripts/odp --cores 16
+
+
+
+######
+
+######
+
+
+nano config.yaml
+
+
+# Example config.yaml file for: odp_rbh_to_ribbon
+# Author: dts
+# github account: @conchoecia
+# link to github repo: https://github.com/conchoecia/odp
+# date: 2022-2023
+# license: GNU GPL https://github.com/conchoecia/odp/blob/main/LICENSE
+#
+# Goal: This script creates ribbon plots of genome synteny.
+#
+# First select which plotting order is desired for the chromosomes
+#  chr_sort_order < custom | optimal-top | optimal-size | optimal-random >
+#    custom         - use the custom sorting order for EVERY species in chromorder
+#    optimal-top    - use the custom order for the topmost species, then optimizes everything else
+#    optimal-size   - sort the top species' chromosomes by number of genes, optimize everything else
+#    optimal-chr-or - use `chromorder` when possible, optimize everything else
+#    optimal-random - randomly sort the chromosomes of the top species, optimize everything else
+chr_sort_order: optimal-chr-or
+
+# - If you only want to plot the significant relationships, set to False
+#   - the significant lines will be 0.8
+# - If you want to plot everything, set to True
+#   - the significant lines will be 0.8, the faint lines will be 0.15
+plot_all: True
+
+# - First type in the list of species to plot
+# - In this example we plot the relationships between
+#   three species with the codes "EMU", "RES", and "HCA".
+#   These three species must also be present in the "species"
+#   entry of the config file below.
+species_order:
+  - Macyan
+  - Macrocret
+  - APH5344
+  - Chaelym
+  - Ectdav
+  - Stemim
+  - Steten
+  - Octsin
+  - Amafer
+  - Eraatr
+  - Salsce
+  - Parpse
+  - Latele
+  - Partep
+  - Tetmon
+  - Hylgra
+  - Troexc
+  - Triant
+  - Argbru
+  - Levtho
+
+
+# If your rbh files were generated with odp, you can just supply the
+#  path to the
+rbh_directory: /mnt/zeta/ebriggs/spider_synteny/analysis/odp/step2-figures/synteny_coloredby_BCnS_LGs/
+
+# - All of the species that are in "species_order" above should be here
+# - This information is important for calculating some stats that are used
+#   for plotting.
+# - The necessary fields are:
+#   - proteins
+#   - chrom
+#   - genome
+# - If you specify "minscafsize", then only scaffolds >= this size are
+#   included in the ribbon plot.
+species:
+  Macyan:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Macyan_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/MacyanClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Macyan.fna
+    minscafsize: 25442927
+  Macrocret:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Maccret_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/MaccretClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Maccret.fna
+    minscafsize: 30000114
+  APH5344:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/APH5344_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/APH5344Clean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/APH5344.fa
+    minscafsize: 165713969
+  Chaelym:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Chaelym_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/ChaelymClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Chaelym.fna
+    minscafsize: 30226836
+  Ectdav:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Ectdav_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/EctdavClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Ectdav.fasta
+    minscafsize: 50024090
+  Stemim:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Stemim_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/StemimClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Stemim.fna
+    minscafsize: 121853691
+  Steten:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Steten_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/StetenClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Steten.fna
+    minscafsize: 119337668
+  Octsin:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Octsin_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/OctsinClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Octsin.fna
+    minscafsize: 117583402
+  Amafer:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Amafer_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/AmaferClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Amafer.fna
+    minscafsize: 109674794
+  Eraatr:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Eraatr_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/EraatrClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Eraatr.fna
+    minscafsize: 167236140
+  Salsce:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Salsce_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/SalsceClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Salsce.fna
+    minscafsize: 226356984
+  Parpse:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Parpse_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/ParpseClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Parpse.fna
+    minscafsize: 95963700
+  Latele:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Latele_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/LateleClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Latele.fna
+    minscafsize: 69395454
+  Partep:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Partep_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/PartepClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Partep.fna
+    minscafsize: 60017610
+  Tetmon:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Tetmon_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/TetmonClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Tetmon.fna
+    minscafsize: 51547119
+  Hylgra:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Hylgra_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/HylgraClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Hylgra.fna
+    minscafsize: 46398548
+  Troexc:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Troexc_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/TroexcClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Troexc.fna
+    minscafsize: 61712969
+  Triant:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Triant_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/TriantClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Triant.fna
+    minscafsize: 112320019
+  Argbru:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Argbru_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/ArgbruClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Argbru.fna
+    minscafsize: 104101263
+  Levtho:
+    proteins: /mnt/zeta/ebriggs/spider_synteny/analysis/Levtho_all_single_buscos.faa
+    chrom: /mnt/zeta/ebriggs/spider_synteny/analysis/LevthoClean.chrom
+    genome: /mnt/zeta/ebriggs/spider_synteny/genomes/Levtho.fna
+    minscafsize: 130339984
+
+
+
+snakemake --snakefile /mnt/zeta/ebriggs/odp/scripts/odp_rbh_to_ribbon --cores 8
