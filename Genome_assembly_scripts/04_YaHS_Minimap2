@@ -9,7 +9,7 @@
 #SBATCH --mem=800G
 #SBATCH --cpus-per-task=40
 
-#load minimap2
+#load minimap2 and samtools
 . /usr/modules/init/bash
 module load minimap2
 module load samtools
