@@ -1,4 +1,4 @@
-Code and data used to assemble the Aphonopelma marxi genome.
+Code and data used to assemble the _Aphonopelma marxi_ genome.
 
 This research was performed at the University of Idaho, Moscow, ID, USA
 
