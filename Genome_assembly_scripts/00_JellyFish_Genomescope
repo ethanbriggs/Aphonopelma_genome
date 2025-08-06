@@ -18,6 +18,8 @@ jellyfish count -F8 <(zcat ${workdir}m64027_230829_115422.hifi_reads.fastq.gz) <
 
 jellyfish histo ${workdir}/analysis/kmer/APH_5344_8cells.jf > ${out}APH_5344_8cells.histo
 
+#END SCRIPT
+
 #Link to GenomeScope website
 
 (http://genomescope.org/)
