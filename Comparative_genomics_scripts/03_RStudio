@@ -1,12 +1,10 @@
 #R script for making figures
 
-
+#load ggplot2
 library(ggplot2)
 
 # read in data
-
 df_fig2 <- read.csv("Gsize_cov_comp.csv")
-
 
 #Coverage vs complete BUSCOs Figure
 
@@ -45,7 +43,7 @@ ggplot(df_fig2, aes(x = Coverage, y = Complete, color = Order)) +
     "Mesothelae" = "darkgrey",
     "Araneomorphae"      = "black"))
 
-
+#Genome size figure
 
 df_fig2 <- read.csv("Gsize_cov_comp.csv")
 df_fig2$sp <- factor(df_fig2$sp, levels = rev (df_fig2$sp))
@@ -64,10 +62,6 @@ ggplot(df_fig2, aes(x = sp, y = genome_size, fill = rank)) +
     "Araneomorphae:Uloboridae" = "#86DD45FF",
     "Araneomorphae:RTA" = "#E35205FF",
     "Araneomorphae:Araneoidea" = "#000000FF"))
-
-
-
-
 
 
 #Repeat Content Figure
