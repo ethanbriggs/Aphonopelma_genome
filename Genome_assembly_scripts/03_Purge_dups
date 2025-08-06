@@ -10,7 +10,7 @@
 CCS=/mnt/ceph/hamiltonlab_data/EJB_WGS/APH_5344/CCS/
 
 
-#step 1: align all reads to the genome
+#1. load modules and align
 module load minimap2
 module load samtools
 
