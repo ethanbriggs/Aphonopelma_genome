@@ -32,6 +32,8 @@ gzip -c - > APH_5344_8cells.asm.split.self.paf.gz
 /opt/modules/biology/purge_dups/1.2.6/bin/purge_dups -2 -T cutoffs -c PB.base.cov APH_5344_8cells.asm.split.self.paf.gz > dups.bed 2> purge_dups.log
 /opt/modules/biology/purge_dups/1.2.6/bin/get_seqs -e dups.bed APH_5344_8cells.asm.bp.p_ctg.fa
 
+#END SCRIPT
+
 
 module load python
 python3 /opt/modules/biology/purge_dups/1.2.6/scripts/hist_plot.py -c cutoffs PB.stat PB.cov.png
