@@ -7,9 +7,9 @@ For any question regarding this repository please contact Ethan Briggs (ebriggs@
 (Add photo of APH_5344)
 
 
-Link to Paper:
-Link to Supp data:
-Link to Raw data:
+Link to Paper: (update when published)
+Link to Supp data: (update when published)
+Link to Raw data: (update when published)
 
 Data produced for this study can be found on NCBI under:
 BioProject ID: PRJNA1269020
