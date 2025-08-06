@@ -1,0 +1,13 @@
+#where you can find Araneae genomes on NCBI
+https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=6893
+
+conda activate ncbi-datasets
+
+
+#example for each of the genomes downloaded from NCBI
+
+mkdir Stegodyphus_mimosarum
+cd Stegodyphus_mimosarum
+datasets download genome accession GCA_044660205.1
+unzip ncbi_dataset.zip
+perl /mnt/ceph/hamiltonlab_data/EJB_WGS/scripts/asmstats GCA_044660205.1_ASM4466020v1_genomic.fna > GCA_044660205.1_ASM4466020v1_genomic.fna.stats
