@@ -1,6 +1,7 @@
 #after producing the AGP file from Pretext
 
-#correct the AGP file, due to small scaffolds
+#correct the AGP file with python script, due to small scaffolds
+#location of script https://github.com/sanger-tol/PretextView/blob/master/AGPCorrect
 python AGPCorrect.py APH_5344_yahs_2rounds_scaffolds_final.fa APH_5344_yahs_2R_edit.pretext_withX.agp > ./APH_5344_yahs_2R_edit.pretext_withX_corrected.agp
 
 #AGP to Fasta file
