@@ -6,6 +6,8 @@ conda activate ncbi-datasets
 
 #example for each of the genomes downloaded from NCBI
 
+
+
 mkdir Stegodyphus_mimosarum
 cd Stegodyphus_mimosarum
 datasets download genome accession GCA_044660205.1
