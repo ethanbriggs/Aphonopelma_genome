@@ -3,10 +3,7 @@ https://www.ncbi.nlm.nih.gov/datasets/genome/?taxon=6893
 
 conda activate ncbi-datasets
 
-
 #example for each of the genomes downloaded from NCBI
-
-
 
 mkdir Stegodyphus_mimosarum
 cd Stegodyphus_mimosarum
