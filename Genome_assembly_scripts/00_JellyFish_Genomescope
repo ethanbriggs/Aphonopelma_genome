@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH -J EJB_jellyfish_A5344
+#SBATCH -J jellyfish
 #SBATCH -C "ceph"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=ebriggs@uidaho.edu
@@ -21,5 +21,6 @@ jellyfish histo ${workdir}/analysis/kmer/APH_5344_8cells.jf > ${out}APH_5344_8ce
 #END SCRIPT
 
 #Link to GenomeScope website
+Use the same k-mer value as Jellyfish
 
 (http://genomescope.org/)
