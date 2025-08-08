@@ -14,7 +14,7 @@
 module load minimap2
 module load samtools
 
-#HiC_reads=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/HiC_scaffolding/HiC_reads/
+HiC_reads=/mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/HiC_scaffolding/HiC_reads/
 
 #index ref to get fai file for yahs
 #samtools faidx Aph_5344_purged.fa -o Aph_5344_purged.fa.fai
