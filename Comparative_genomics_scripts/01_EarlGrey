@@ -1,20 +1,23 @@
 #example script for each
 
 #!/bin/bash
-#SBATCH -J EG_APH
+#SBATCH -J EG_TricAnti
 #SBATCH -C "ceph"
 #SBATCH --mail-type=BEGIN,END,FAIL
 #SBATCH --mail-user=ebriggs@uidaho.edu
 #SBATCH -p eight-long
-#SBATCH --mem=1000G
-#SBATCH --cpus-per-task=40
+#SBATCH --mem=500G
+#SBATCH --cpus-per-task=24
 #SBATCH --exclusive
 
 ## Load conda env
 source /mnt/zeta/ebriggs/miniconda3/bin/activate
 conda activate earlgrey
 
-export TMPDIR=/mnt/zeta/ebriggs/earlgrey/APH_5344/temp
+export TMPDIR=/mnt/zeta/ebriggs/earlgrey/Trichonephila_antipodiana/temp
 mkdir -p $TMPDIR
 
-earlGrey -g /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/FINAL_GENOME/APH_5344_corrected_clean.fa -s APH_5344_ -o ./earlGreyOutputs_APH -t 40 -d yes
+cp /mnt/ceph/hamiltonlab_data/EJB_WGS/Thera_ref_genome/other_genomes/Trichonephila_antipodiana/ncbi_dataset/data/GCA_050495765.1/GCA_050495765.1_ASM5049576v1_genomic.fna $TMPDIR/GCA_050495765.1_ASM5049576v1_genomic.fna
+echo "Finished copying genome."
+
+earlGrey -g $TMPDIR/GCA_050495765.1_ASM5049576v1_genomic.fna -s Trichonephila_antipodiana -o ./earlGreyOutputs_TricAnti -t 24
