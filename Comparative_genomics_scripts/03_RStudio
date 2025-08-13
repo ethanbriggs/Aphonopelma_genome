@@ -1,13 +1,10 @@
-#R script for making figures
-
-#load ggplot2
 library(ggplot2)
 
+
 # read in data
-CTRL+SHIFT+H
+
 df_fig2 <- read.csv("Gsize_cov_comp.csv")
 
-#Coverage vs complete BUSCOs Figure
 
 ggplot(df_fig2, aes(x = Coverage, y = Complete, color = rank)) +
   geom_point(size = 5) +
@@ -25,11 +22,11 @@ ggplot(df_fig2, aes(x = Coverage, y = Complete, color = rank)) +
     "Araneomorphae:Hypochilidae"      = "#BA0C2FFF",
     "Araneomorphae:Eresidae" = "#FEDD00FF",
     "Araneomorphae:Uloboridae" = "#86DD45FF",
-    "Araneomorphae:RTA" = "#E35205FF",
+    "Araneomorphae:RTA" = "brown",
     "Araneomorphae:Araneoidea"      = "#000000FF"))
 
 
-ggplot(df_fig2, aes(x = Coverage, y = Complete, color = Order)) +
+ggplot(df_fig2, aes(x = Coverage, y = Complete, color = Order, shape = Order)) +
   geom_point(size = 5) +
   labs(x = "Coverage", y = "BUSCOs Complete (%)", title = "Genome Completeness vs Coverage") +
   theme_light() +
@@ -42,12 +39,22 @@ ggplot(df_fig2, aes(x = Coverage, y = Complete, color = Order)) +
   scale_color_manual(values = c(
     "Mygalomorphae" = "#D01556FF",
     "Mesothelae" = "darkgrey",
-    "Araneomorphae"      = "black"))
+    "Araneomorphae"      = "black"))+
+  scale_shape_manual(values = c(
+    "Mygalomorphae" = 16,  # solid circle
+    "Araneomorphae" = 17,  # solid triangle
+    "Mesothelae"     = 15   # solid square
+  ))
 
-#Genome size figure
+
+
+
 
 df_fig2 <- read.csv("Gsize_cov_comp.csv")
 df_fig2$sp <- factor(df_fig2$sp, levels = rev (df_fig2$sp))
+
+
+
 
 ggplot(df_fig2, aes(x = sp, y = genome_size, fill = rank)) +
   geom_bar(stat = "identity") +
@@ -61,11 +68,13 @@ ggplot(df_fig2, aes(x = sp, y = genome_size, fill = rank)) +
     "Araneomorphae:Hypochilidae"      = "#BA0C2FFF",
     "Araneomorphae:Eresidae" = "#FEDD00FF",
     "Araneomorphae:Uloboridae" = "#86DD45FF",
-    "Araneomorphae:RTA" = "#E35205FF",
+    "Araneomorphae:RTA" = "brown",
     "Araneomorphae:Araneoidea" = "#000000FF"))
 
 
+
 #Repeat Content Figure
+
 
 # Load required libraries
 library(tidyverse)
@@ -78,8 +87,7 @@ df_long <- df %>%
   pivot_longer(
     cols = -ID,
     names_to = "Repeat_Type",
-    values_to = "Percentage"
-  )
+    values_to = "Percentage" )
 
 df_long$ID <- factor(df_long$ID, levels = rev(df$ID))
 
@@ -118,11 +126,10 @@ ggplot(df_long, aes(x = ID, y = Percentage, fill = Repeat_Type)) +
   theme_minimal() +
   theme(
     axis.text.y = element_text(size = 9),
-    legend.position = "right"
-  )
+    legend.position = "right" )
 
 
-#make tree for figures 2 and 3
+#make tree
 
 library(ape)
 #BiocManager::install("ggtree")
@@ -137,6 +144,7 @@ P <- ggtree(tree,ladderize = TRUE) +  geom_text(aes(label=node), hjust=-0.3) +
 P
 P <- ggtree(tree,ladderize = TRUE) +
   geom_tiplab()
+
 
 p_rotated <- rotate(P, node = 23)
 p_rotated
