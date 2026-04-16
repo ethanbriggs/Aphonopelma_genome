@@ -1,4 +1,4 @@
-Code and data used to assemble the _Aphonopelma marxi_ genome published by Ethan J Briggs, Andrea J Noble-Stuen, and Chris A Hamilton
+Code and data used to assemble the _Aphonopelma marxi_ genome published by Ethan J Briggs, Andrea J Noble-Stuen, and Chris A Hamilton in _Genome Biology & Evolution_
 
 For any question regarding this repository please contact Ethan Briggs (ethan.briggs@australian.museum)
 
