@@ -2,8 +2,7 @@ Code and data used to assemble the _Aphonopelma marxi_ genome published by Ethan
 
 For any question regarding this repository please contact Ethan Briggs (ethan.briggs@australian.museum)
 
-Link to Paper: (update when published)
-Link to Supp data: (update when published)
+Link to Paper: (https://academic.oup.com/gbe/article/18/4/evag081/8643931?guestAccessKey=)
 
 Link to Genome :(https://www.ncbi.nlm.nih.gov/datasets/genome/GCA_054742115.1/)
 
